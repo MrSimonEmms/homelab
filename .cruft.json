@@ -1,0 +1,17 @@
+{
+  "template": "https://github.com/mrsimonemms/new",
+  "commit": "ffc80e518001970272da42c4a29c7c4a15f897d1",
+  "checkout": "main",
+  "context": {
+    "cookiecutter": {
+      "project_name": "homelab",
+      "description": "My homelab setup",
+      "author": "Simon Emms <simon@simonemms.com>",
+      "_template": "https://github.com/mrsimonemms/new"
+    }
+  },
+  "directory": "blank",
+  "skip": [
+    ".git"
+  ]
+}
