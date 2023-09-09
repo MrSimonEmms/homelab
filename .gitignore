@@ -9,3 +9,7 @@ Thumbs.db
 .commit
 .devbox
 .envrc
+
+clusters/*/config.yaml
+ssh-keys
+kubeconfig

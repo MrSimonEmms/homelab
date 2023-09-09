@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+DIR ?= clusters/hetzner-k3s
+
+create:
+	@envsubst < ${DIR}/config.yaml.tpl > ${DIR}/config.yaml
+
+	@hetzner-k3s create --config ${DIR}/config.yaml
+.PHONY: create
+
 cruft-update:
 ifeq (,$(wildcard .cruft.json))
 	@echo "Cruft not configured"
@@ -19,3 +27,8 @@ else
 	@cruft check || cruft update --skip-apply-ask --refresh-private-variables
 endif
 .PHONY: cruft-update
+
+destroy:
+	@hetzner-k3s delete --config ${DIR}/config.yaml
+	@rm ${KUBECONFIG}
+.PHONY: destroy
