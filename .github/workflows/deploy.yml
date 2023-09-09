@@ -1,0 +1,35 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+jobs:
+  hetzner:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Hetzner-k3s
+        env:
+          PKG: vitobotta/hetzner-k3s
+        run: |
+          wget -q -O /tmp/hetzner-k3s $(curl -s "https://api.github.com/repos/${{ env.PKG }}/releases/latest" \
+            | jq -r '.assets[] | select(.name == "hetzner-k3s-linux-x86_64").browser_download_url')
+
+            sudo install -o root -g root -m 0755 /tmp/hetzner-k3s /usr/bin/hetzner-k3s
+
+            hetzner-k3s --version
+
+      - name: Deploy cluster
+        env:
+          HETZNER_TOKEN: ${{ secrets.HETZNER_TOKEN }}
+        run: |
+          mkdir -p ./ssh-keys
+          echo "${{ secrets.SSH_KEY }}" > ./ssh-keys/homelab
+          echo "${{ secrets.SSH_KEY_PUB }}" > ./ssh-keys/homelab.pub
+          chmod 600 ./ssh-keys/homelab
+
+          envsubst < ./clusters/hetzner-k3s/config.yaml.tpl > ./clusters/hetzner-k3s/config.yaml
+
+          hetzner-k3s create --config ./clusters/hetzner-k3s/config.yaml
